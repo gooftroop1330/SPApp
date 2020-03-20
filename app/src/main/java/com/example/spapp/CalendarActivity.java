@@ -20,14 +20,10 @@ public class CalendarActivity extends AppCompatActivity
 {
     CalendarView calView;
     TextView date;
-    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy");
     String selectedDate;
-    long setter;
-    SimpleDateFormat curr = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-    String currDate = curr.format(new Date());
-    long now;
-    long past;
-    long future;
+    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+    String currDate = sdf.format(new Date());
+    long setter, now, past, future;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,19 +55,21 @@ public class CalendarActivity extends AppCompatActivity
 
     public void initializeCalView(String date) {
         try {
+
             Date heh = sdf.parse(date);
+            assert heh != null;
             setter = heh.getTime();
+
+            Date currentDate = sdf.parse(currDate);
+            assert currentDate != null;
+            now = currentDate.getTime();
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         calView = (CalendarView) findViewById(R.id.calendarView);
         calView.setDate(setter, true, true);
-        try {
-            Date currentDate = sdf.parse(currDate);
-            now = currentDate.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
         past = now - (DateUtils.YEAR_IN_MILLIS / 12);
         future = now + (DateUtils.YEAR_IN_MILLIS / 12);
         calView.setMaxDate(future);
