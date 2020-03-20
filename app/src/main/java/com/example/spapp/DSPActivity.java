@@ -13,16 +13,14 @@ import java.util.Locale;
 
 public class DSPActivity extends AppCompatActivity
 {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        String selectedDate = getIntent().getStringExtra("selectedDate");
         setContentView(R.layout.dsp);
         TextView textView = findViewById(R.id.date);
-        String currentDate = sdf.format(new Date());
-        textView.setText(currentDate);
+        textView.setText(selectedDate);
     }
 
     public void viewCalendar(View view)

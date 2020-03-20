@@ -8,15 +8,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class WelcomeActivity extends AppCompatActivity
 {
 
-
-    public static final String theDate = "19 March 2020";
+    public static SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+    String currentDate = sdf.format(new Date());
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -29,6 +31,7 @@ public class WelcomeActivity extends AppCompatActivity
     public void letsGetItOn(View view)
     {
         Intent intent = new Intent(this, DSPActivity.class);
+        intent.putExtra("selectedDate", currentDate);
         startActivity(intent);
     }
 }
