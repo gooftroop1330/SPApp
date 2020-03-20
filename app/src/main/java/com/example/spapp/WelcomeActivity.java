@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Locale;
 
