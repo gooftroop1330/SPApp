@@ -34,14 +34,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectedDate" />
+        app:layout_constraintTop_toBottomOf="@+id/selectedDate"/>
 
     <Button
         android:id="@+id/saveDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/cal_btn_bg"
+        android:background="@drawable/ripple_effect"
         android:onClick="selectDate"
         android:paddingLeft="20dp"
         android:paddingTop="20dp"
