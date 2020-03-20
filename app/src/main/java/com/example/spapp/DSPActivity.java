@@ -13,11 +13,13 @@ import java.util.Locale;
 
 public class DSPActivity extends AppCompatActivity
 {
+    String selectedDate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        String selectedDate = getIntent().getStringExtra("selectedDate");
+        selectedDate = getIntent().getStringExtra("selectedDate");
         setContentView(R.layout.dsp);
         TextView textView = findViewById(R.id.date);
         textView.setText(selectedDate);
@@ -26,6 +28,7 @@ public class DSPActivity extends AppCompatActivity
     public void viewCalendar(View view)
     {
         Intent intent = new Intent(this, CalendarActivity.class);
+        intent.putExtra("selectedDate", selectedDate);
         startActivity(intent);
     }
 }

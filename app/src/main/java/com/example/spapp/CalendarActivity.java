@@ -25,9 +25,10 @@ public class CalendarActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar);
-
+        selectedDate = getIntent().getStringExtra("selectedDate");
         calView = (CalendarView) findViewById(R.id.calendarView);
         date = (TextView) findViewById(R.id.selectedDate);
+        date.setText(selectedDate);
 
         calView.setOnDateChangeListener(new CalendarView.OnDateChangeListener()
         {
@@ -35,7 +36,6 @@ public class CalendarActivity extends AppCompatActivity
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth)
             {
                 selectedDate = sdf.format(new Date(year-1900,month,dayOfMonth));
-
                 date.setText(selectedDate);
             }
         });
