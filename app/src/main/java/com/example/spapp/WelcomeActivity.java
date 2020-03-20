@@ -12,13 +12,15 @@ import java.time.LocalDate;
 import java.util.Date;
 
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends AppCompatActivity
+{
 
 
     public static final String theDate = "19 March 2020";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);

@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Daily Sex Position</string>
     <string name="welcome_button_text">Let\'s Get It On</string>
+    <string name="selectedDate">Select a date</string>
 </resources>
