@@ -3,6 +3,7 @@ package com.example.spapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CalendarView;
@@ -17,6 +18,7 @@ public class CalendarActivity extends AppCompatActivity
     CalendarView calView;
     TextView date;
     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+    String selectedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -32,7 +34,8 @@ public class CalendarActivity extends AppCompatActivity
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth)
             {
-                String selectedDate = sdf.format(new Date(year-1900,month,dayOfMonth));
+                selectedDate = sdf.format(new Date(year-1900,month,dayOfMonth));
+
                 date.setText(selectedDate);
             }
         });
@@ -40,6 +43,8 @@ public class CalendarActivity extends AppCompatActivity
 
     public void selectDate(View view)
     {
-
+        Intent intent = new Intent(this, DSPActivity.class);
+        intent.putExtra("selectedDate", selectedDate);
+        startActivity(intent);
     }
 }
