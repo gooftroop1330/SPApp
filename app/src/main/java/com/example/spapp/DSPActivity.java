@@ -19,7 +19,9 @@ public class DSPActivity extends AppCompatActivity
         selectedDate = getIntent().getStringExtra("selectedDate");
         setContentView(R.layout.dsp);
         TextView textView = findViewById(R.id.date);
+        TextView textView2 = findViewById(R.id.position);
         textView.setText(selectedDate);
+        textView2.setText("ohhh yeahhhh sexy time");
     }
 
     public void viewCalendar(View view)
@@ -28,4 +30,5 @@ public class DSPActivity extends AppCompatActivity
         intent.putExtra("selectedDate", selectedDate);
         startActivity(intent);
     }
+
 }
