@@ -9,7 +9,10 @@ import android.provider.ContactsContract;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
+import com.example.spapp.database.AppDatabase;
+import com.example.spapp.models.Position;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -24,15 +27,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.List;
 
 public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
+    AppDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        createPositionInfo();
 
         setContentView(R.layout.splash);
 
@@ -57,7 +62,7 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-    public void createPositionInfo() {
+    public void createPositionJSON() {
         String currLine = "";
         String split = ",";
         try {
@@ -66,15 +71,25 @@ public class SplashActivity extends AppCompatActivity {
             currLine = br.readLine();
             while ((currLine = br.readLine()) != null) {
                 String[] position = currLine.split(split, 3);
-                position[1] = (position[1].split(". ", 2))[1];
-                //Push to Database
+                int id = Integer.parseInt((position[1].split(". ", 2))[0]);
+                String position_name = (position[1].split(". ", 2))[1];
+                String description = position[2];
+
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
 
+        }
+    }
+
+    private void populateDatabase(List<Position> position_list) {
+        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").build();
+        for(Position pos : position_list)
+        {
+            db.positionDao().insert(pos);
+        }
     }
 }
 

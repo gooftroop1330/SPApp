@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -25,6 +28,7 @@ public class WelcomeActivity extends AppCompatActivity
     public static SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
     String currentDate = sdf.format(new Date());
 
+    TextView animated_text;
     private AdView ad_view;
     private AdView ad_view2;
 
@@ -34,6 +38,10 @@ public class WelcomeActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
+
+
+        startAnimation();
+
 
         ad_view = (AdView) findViewById(R.id.adView);
         ad_view2 = (AdView) findViewById(R.id.adView2);
@@ -51,4 +59,14 @@ public class WelcomeActivity extends AppCompatActivity
         intent.putExtra("selectedDate", currentDate);
         startActivity(intent);
     }
+
+    public void startAnimation()
+    {
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim);
+        animated_text = findViewById(R.id.innuendos);
+        animated_text.clearAnimation();
+        animated_text.startAnimation(animation);
+
+    }
+
 }
