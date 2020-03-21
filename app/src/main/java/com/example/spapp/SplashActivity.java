@@ -6,7 +6,10 @@ import android.os.Handler;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
+import com.example.spapp.database.AppDatabase;
+import com.example.spapp.models.Position;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
@@ -21,10 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.List;
 
 public class SplashActivity extends AppCompatActivity
 {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
+    AppDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -92,6 +98,15 @@ public class SplashActivity extends AppCompatActivity
         } catch (JSONException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    private void populateDatabase(List<Position> position_list)
+    {
+        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").build();
+        for(Position pos : position_list)
+        {
+            db.positionDao().insert(pos);
         }
     }
 }

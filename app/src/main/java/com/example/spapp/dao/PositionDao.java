@@ -23,7 +23,7 @@ public interface PositionDao
     List<Position> loadAllByDays(long[] positionDays);
 
     @Insert
-    void insertAll(Position ... positions);
+    void insert(Position position);
 
     @Delete
     void delete(Position position);
