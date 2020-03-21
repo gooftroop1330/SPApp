@@ -7,9 +7,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,6 +29,7 @@ public class SplashActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         createPositionJSON();
+
         setContentView(R.layout.splash);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -43,6 +50,7 @@ public class SplashActivity extends AppCompatActivity {
     public void createPositionJSON() {
         String currLine = "";
         String split = ",";
+        JSONArray allPositionInfo = new JSONArray();
         try {
             InputStream is = getResources().openRawResource(R.raw.rescraped);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -50,20 +58,18 @@ public class SplashActivity extends AppCompatActivity {
             while((currLine = br.readLine()) != null) {
                 String[] position = currLine.split(split, 3);
                 position[1] = (position[1].split(". ", 2))[1];
-                wait(100);
-                //JSONObject positionInfo = new JSONObject();
-                //positionInfo.put("name", position[1]);
-                //positionInfo.put("description", position[2]);
+                JSONObject positionInfo = new JSONObject();
+                positionInfo.put("title", position[1]);
+                positionInfo.put("description", position[2]);
+                allPositionInfo.put(positionInfo);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 }
 
