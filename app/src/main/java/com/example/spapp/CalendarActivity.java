@@ -27,8 +27,10 @@ public class CalendarActivity extends AppCompatActivity
     CalendarView calView;
     TextView date;
     String selectedDate;
+
     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
     String currDate = sdf.format(new Date());
+
     long setter, now, past, future;
     private AdView ad_view4;
 
@@ -37,11 +39,16 @@ public class CalendarActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.calendar);
+
+        // Gets the selected date from DSPActivity
         selectedDate = getIntent().getStringExtra("selectedDate");
         initializeCalView(selectedDate);
+
+        // sets date text from the users previous selected date
         date = (TextView) findViewById(R.id.selectedDate);
         date.setText(selectedDate);
 
+        // Changes date text when user changes the date
         calView.setOnDateChangeListener(new CalendarView.OnDateChangeListener()
         {
             @Override
@@ -52,12 +59,14 @@ public class CalendarActivity extends AppCompatActivity
             }
         });
 
+        // Google Ads
         ad_view4 = (AdView) findViewById(R.id.adView4);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
         ad_view4.loadAd(adRequest);
     }
 
+    // returns the dsp activity with the user selected date
     public void selectDate(View view)
     {
         Intent intent = new Intent(this, DSPActivity.class);
@@ -65,6 +74,7 @@ public class CalendarActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    // Parses string representation of date into Date object and sets the date to the user selected date
     public void initializeCalView(String date) {
         try {
 
@@ -82,6 +92,8 @@ public class CalendarActivity extends AppCompatActivity
 
         calView = (CalendarView) findViewById(R.id.calendarView);
         calView.setDate(setter, true, true);
+
+        // 1 month of visibility
         past = now - (DateUtils.YEAR_IN_MILLIS / 12);
         future = now + (DateUtils.YEAR_IN_MILLIS / 12);
         calView.setMaxDate(future);

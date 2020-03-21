@@ -39,10 +39,9 @@ public class WelcomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.welcome);
 
-
         startAnimation();
 
-
+        // Google Ads
         ad_view = (AdView) findViewById(R.id.adView);
         ad_view2 = (AdView) findViewById(R.id.adView2);
 
@@ -53,6 +52,7 @@ public class WelcomeActivity extends AppCompatActivity
 
     }
 
+    // Passes the current date to dsp
     public void letsGetItOn(View view)
     {
         Intent intent = new Intent(this, DSPActivity.class);
@@ -60,6 +60,7 @@ public class WelcomeActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    // Plays text animation infinitely
     public void startAnimation()
     {
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim);

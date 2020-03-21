@@ -25,11 +25,15 @@ public class DSPActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         selectedDate = getIntent().getStringExtra("selectedDate");
         setContentView(R.layout.dsp);
+
         TextView textView = findViewById(R.id.date);
         TextView textView2 = findViewById(R.id.position);
         textView.setText(selectedDate);
+
+        // Position name
         textView2.setText("ohhh yeahhhh sexy time");
 
+        // Google Ads
         ad_view3 = (AdView) findViewById(R.id.adView3);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
@@ -38,6 +42,7 @@ public class DSPActivity extends AppCompatActivity
 
     }
 
+    // Clcik on calendar and it sends the date from dsp to calendar
     public void viewCalendar(View view)
     {
         Intent intent = new Intent(this, CalendarActivity.class);

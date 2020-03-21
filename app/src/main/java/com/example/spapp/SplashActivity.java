@@ -33,16 +33,15 @@ public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
     AppDatabase db;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        // Shows splash screen for 2 seconds
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -55,6 +54,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, SPLASH_SCREEN_TIMEOUT);
 
+        // Initializes the ads in the app
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -62,6 +62,7 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
+    // Creates the position object after parsing the csv file
     public void createPositionJSON() {
         String currLine = "";
         String split = ",";
@@ -84,6 +85,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+    // It does what it says
     private void populateDatabase(List<Position> position_list) {
         db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").build();
         for(Position pos : position_list)
