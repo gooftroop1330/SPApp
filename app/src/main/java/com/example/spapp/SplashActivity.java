@@ -65,23 +65,32 @@ public class SplashActivity extends AppCompatActivity
         String currLine = "";
         String split = ",";
         JSONArray allPositionInfo = new JSONArray();
-        try {
+        try
+        {
             InputStream is = getResources().openRawResource(R.raw.rescraped);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             currLine = br.readLine();
-            while((currLine = br.readLine()) != null) {
+            while ((currLine = br.readLine()) != null)
+            {
                 String[] position = currLine.split(split, 3);
-                position[1] = (position[1].split(". ", 2))[1];
+                int id = Integer.parseInt((position[1].split(". ", 2))[0]);
+                String position_name = (position[1].split(". ", 2))[1];
+                String description = position[2];
+
                 JSONObject positionInfo = new JSONObject();
-                positionInfo.put("title", position[1]);
-                positionInfo.put("description", position[2]);
+                positionInfo.put("id", id);
+                positionInfo.put("position_name", position_name);
+                positionInfo.put("description", description);
                 allPositionInfo.put(positionInfo);
             }
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e)
+        {
             e.printStackTrace();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (JSONException e)
+        {
             e.printStackTrace();
         }
     }
