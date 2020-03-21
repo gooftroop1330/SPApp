@@ -11,11 +11,17 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+// TODO: USE PRODUCTION AdUnitID
+// PRODUCTION AdUnitID
+// ad_view.setAdUnitId("ca-app-pub-6460192778031720/8190674303");
 public class CalendarActivity extends AppCompatActivity
 {
     CalendarView calView;
@@ -24,6 +30,7 @@ public class CalendarActivity extends AppCompatActivity
     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
     String currDate = sdf.format(new Date());
     long setter, now, past, future;
+    private AdView ad_view4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,6 +51,11 @@ public class CalendarActivity extends AppCompatActivity
                 date.setText(selectedDate);
             }
         });
+
+        ad_view4 = (AdView) findViewById(R.id.adView4);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
+        ad_view4.loadAd(adRequest);
     }
 
     public void selectDate(View view)
