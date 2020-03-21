@@ -62,7 +62,6 @@ public class SplashActivity extends AppCompatActivity
 
     public void createPositionJSON()
     {
-        public void createPositionJSON() {
         String currLine = "";
         String split = ",";
         JSONArray allPositionInfo = new JSONArray();
