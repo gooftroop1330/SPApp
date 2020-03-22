@@ -6,8 +6,11 @@ import android.os.Bundle;
 
 import android.os.Handler;
 import android.provider.ContactsContract;
+import android.text.format.DateUtils;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
@@ -27,12 +30,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
 
 public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
-    AppDatabase db;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,9 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
+        //IF STATEMENT
+        long currTime = System.currentTimeMillis();
+        createPositions(currTime);
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -62,19 +74,30 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-    public void createPositionJSON() {
+    public void createPositions(long time) {
+        List<Position> allPositions = new ArrayList<>();
         String currLine = "";
         String split = ",";
         try {
             InputStream is = getResources().openRawResource(R.raw.rescraped);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            List<Integer> shuffledList = createSuffledNumbers(400);
             currLine = br.readLine();
+            Date test = new Date();
+            test.setTime(time);
+            int i = 0;
             while ((currLine = br.readLine()) != null) {
                 String[] position = currLine.split(split, 3);
                 int id = Integer.parseInt((position[1].split(". ", 2))[0]);
                 String position_name = (position[1].split(". ", 2))[1];
                 String description = position[2];
-
+                Position positionTBA = new Position();
+                positionTBA.setId(id);
+                positionTBA.setPosition(position_name);
+                positionTBA.setDescription(description);
+                positionTBA.setDay((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + time);
+                allPositions.add(positionTBA);
+                i++;
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -84,7 +107,17 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+    private List<Integer> createSuffledNumbers (int numOfNums) {
+        List<Integer> shuffled = new ArrayList<>();
+        for (int i = 0; i < numOfNums; i++) {
+            shuffled.add(i);
+        }
+        Collections.shuffle(shuffled);
+        return shuffled;
+    }
+
     private void populateDatabase(List<Position> position_list) {
+        AppDatabase db;
         db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").build();
         for(Position pos : position_list)
         {
