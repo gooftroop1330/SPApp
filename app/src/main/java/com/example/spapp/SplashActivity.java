@@ -1,6 +1,7 @@
 package com.example.spapp;
 
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -10,8 +11,11 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.RoomOpenHelper;
 
 import com.example.spapp.database.AppDatabase;
+import com.example.spapp.models.PopulatedPositions;
 import com.example.spapp.models.Position;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
@@ -19,6 +23,7 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 
 import java.io.BufferedReader;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import java.io.IOException;
@@ -38,7 +43,7 @@ import java.util.Random;
 
 public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
-    AppDatabase db;
+    private AppDatabase db;
 
 
     @Override
@@ -47,21 +52,32 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
+      //  getApplicationContext().deleteDatabase("dsp_db");
+        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
 
-        /**
+
          Date newDate = new Date();
          SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
          String currDate = sdf.format(new Date());
+
          try {
          newDate = sdf.parse(currDate);
          } catch (ParseException e) {
          e.printStackTrace();
          }
-         IF == NULL INITIALIZE
-         ELSE IF (populated_position.get(newDate.getTime() + DateUtils.MONTH_IN_MILLIS) == null THEN createPositions(newDate.getTime());
-         **/
 
-        initializePositions();
+        assert newDate != null;
+        long time = newDate.getTime();
+        boolean db_exists = db.positionDao().getAll().isEmpty();
+
+        if (db_exists)
+        {
+            initializePositions();
+        }
+        else if(db.populatedPositionsDao().checkday(time) == null)
+        {
+            createMorePositions(time);
+        }
 
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -88,14 +104,14 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-    public void initializePositions() {
+    private void initializePositions() {
         List<Position> allPositions = new ArrayList<>();
-
-        Date newDate = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        List<PopulatedPositions> popPositions = new ArrayList<>();
+        Date startDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         String currDate = sdf.format(new Date());
         try {
-            newDate = sdf.parse(currDate);
+            startDate = sdf.parse(currDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -106,22 +122,30 @@ public class SplashActivity extends AppCompatActivity {
             InputStream is = getResources().openRawResource(R.raw.rescraped);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             currLine = br.readLine();
+
             int i = 0;
             List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
 
             while ((currLine = br.readLine()) != null) {
                 String[] position = currLine.split(split, 3);
-
                 int id = Integer.parseInt((position[1].split(". ", 2))[0]);
                 String position_name = (position[1].split(". ", 2))[1];
                 String description = position[2];
-
+                long day = (DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + startDate.getTime();
                 Position positionTBA = new Position();
+                PopulatedPositions pop_pos = new PopulatedPositions();
+
                 positionTBA.setId(id);
                 positionTBA.setPosition(position_name);
                 positionTBA.setDescription(description);
-                positionTBA.setDay((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + newDate.getTime());
+                positionTBA.setDay(day);
                 allPositions.add(positionTBA);
+
+                pop_pos.setPos_id(id);
+                pop_pos.setDate_assigned(day);
+                popPositions.add(pop_pos);
+
+
                 i++;
 
             }
@@ -132,7 +156,44 @@ public class SplashActivity extends AppCompatActivity {
 
         }
 
-        populateDatabase(allPositions);
+        populateDatabase(allPositions, popPositions);
+    }
+
+    private void createMorePositions(long time) {
+        List<PopulatedPositions> popPositions = new ArrayList<>();
+        String currLine = "";
+        String split = ",";
+
+        try {
+            InputStream is = getResources().openRawResource(R.raw.rescraped);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            currLine = br.readLine();
+
+            int i = 0;
+            List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
+
+            while ((currLine = br.readLine()) != null) {
+                String[] position = currLine.split(split, 3);
+                int id = Integer.parseInt((position[1].split(". ", 2))[0]);
+                long dateAssigned = (DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + time;
+                PopulatedPositions pop_pos = new PopulatedPositions();
+
+                pop_pos.setPos_id(id);
+                pop_pos.setDate_assigned(dateAssigned);
+                popPositions.add(pop_pos);
+
+                i++;
+
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
+        updateDatabase(popPositions);
+
     }
 
 
@@ -145,15 +206,32 @@ public class SplashActivity extends AppCompatActivity {
         return shuffled;
     }
 
-    // It does what it says
-
-    private void populateDatabase(List<Position> position_list) {
-        AppDatabase db;
-        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
+    // Runs only first time app starts
+    private void populateDatabase(List<Position> position_list,List<PopulatedPositions> pop_list) {
         for(Position pos : position_list)
         {
-            db.positionDao().delete(pos);
+            db.positionDao().insert(pos);
         }
+        for(PopulatedPositions pos : pop_list)
+        {
+            db.populatedPositionsDao().insert(pos);
+        }
+        List<Position> posss = db.positionDao().getAll();
+        List<PopulatedPositions> pop_posss = db.populatedPositionsDao().getAll();
+    }
+
+    // Updates the PopulatedPositions table with 400 new days when it reaches a certain date
+    private void updateDatabase(List<PopulatedPositions> pop_list) {
+
+        for(PopulatedPositions pos : pop_list)
+        {
+            db.populatedPositionsDao().insert(pos);
+        }
+    }
+
+    private static boolean doesDatabaseExist(Context context, String dbName) {
+        File dbFile = context.getDatabasePath(dbName);
+        return dbFile.exists();
     }
 }
 
