@@ -24,7 +24,7 @@ import java.util.Locale;
 // ad_view.setAdUnitId("ca-app-pub-6460192778031720/8190674303");
 public class DSPActivity extends AppCompatActivity
 {
-    private AppDatabase db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
+    private AppDatabase db;
     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
     Position position;
     String selectedDate;
@@ -35,6 +35,7 @@ public class DSPActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         selectedDate = getIntent().getStringExtra("selectedDate");
+        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
 
         try
         {
