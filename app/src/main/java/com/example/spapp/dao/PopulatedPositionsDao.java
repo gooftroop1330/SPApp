@@ -23,6 +23,9 @@ public interface PopulatedPositionsDao
     @Query("SELECT * FROM populated_positions WHERE date_assigned = (:date)")
     PopulatedPositions checkday(long date);
 
+    @Query("SELECT pos_id FROM populated_positions WHERE date_assigned = (:time)")
+    int getPositionID(long time);
+
     @Insert
     void insert(PopulatedPositions position);
 
