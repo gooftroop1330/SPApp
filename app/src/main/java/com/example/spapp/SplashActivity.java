@@ -52,7 +52,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
-      //  getApplicationContext().deleteDatabase("dsp_db");
+        getApplicationContext().deleteDatabase("dsp_db");
         db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
 
 
