@@ -17,7 +17,7 @@ public class Position
     public String description;
 
     @ColumnInfo(name = "day")
-    public long day;
+    public int day;
 
     public int getId() {
         return id;
