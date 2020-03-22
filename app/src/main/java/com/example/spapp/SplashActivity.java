@@ -90,11 +90,12 @@ public class SplashActivity extends AppCompatActivity {
 
     public void initializePositions() {
         List<Position> allPositions = new ArrayList<>();
-        Date startDate = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
+
+        Date newDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
         String currDate = sdf.format(new Date());
         try {
-            startDate = sdf.parse(currDate);
+            newDate = sdf.parse(currDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -119,7 +120,7 @@ public class SplashActivity extends AppCompatActivity {
                 positionTBA.setId(id);
                 positionTBA.setPosition(position_name);
                 positionTBA.setDescription(description);
-                positionTBA.setDay((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + startDate.getTime());
+                positionTBA.setDay((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + newDate.getTime());
                 allPositions.add(positionTBA);
                 i++;
 
