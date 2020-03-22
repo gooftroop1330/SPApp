@@ -1,11 +1,9 @@
 package com.example.spapp;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,8 +15,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
-
-
 import java.io.BufferedReader;
 
 import java.io.FileNotFoundException;
@@ -27,11 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
-    AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +37,8 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.splash);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        createPositionJSON();
 
         // Shows splash screen for 2 seconds
         new Handler().postDelayed(new Runnable() {
@@ -64,8 +63,13 @@ public class SplashActivity extends AppCompatActivity {
 
     // Creates the position object after parsing the csv file
     public void createPositionJSON() {
+
         String currLine = "";
         String split = ",";
+        List<Position> list_of_positions = new ArrayList<>();
+        List<Integer> randNums = generateRandomList(400);
+        int index = 0;
+
         try {
             InputStream is = getResources().openRawResource(R.raw.rescraped);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
@@ -75,23 +79,39 @@ public class SplashActivity extends AppCompatActivity {
                 int id = Integer.parseInt((position[1].split(". ", 2))[0]);
                 String position_name = (position[1].split(". ", 2))[1];
                 String description = position[2];
-
+                Position posTBA = new Position();
+                posTBA.id = id;
+                posTBA.position = position_name;
+                posTBA.description = description;
+                posTBA.day = randNums.get(index);
+                list_of_positions.add(posTBA);
+                index++;
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-
         }
     }
 
     // It does what it says
     private void populateDatabase(List<Position> position_list) {
-        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").build();
+        AppDatabase db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").build();
         for(Position pos : position_list)
         {
             db.positionDao().insert(pos);
         }
+    }
+
+    public List<Integer> generateRandomList(int num)
+    {
+        List<Integer> randNums = new ArrayList<>();
+        for(int i = 1; i <= num; i++)
+        {
+            randNums.add(i);
+        }
+        Collections.shuffle(randNums);
+        return randNums;
     }
 }
 
