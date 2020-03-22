@@ -18,10 +18,10 @@ public interface PopulatedPositionsDao
     List<PopulatedPositions> getAll();
 
     @Query("SELECT * FROM populated_positions WHERE id IN (:populatedPositionIds)")
-    List<Position> loadAllByIds(int[] populatedPositionIds);
+    List<PopulatedPositions> loadAllByIds(int[] populatedPositionIds);
 
     @Query("SELECT * FROM populated_positions WHERE date_assigned IN (:populatePositionDates)")
-    List<Position> loadAllByDays(long[] populatePositionDates);
+    List<PopulatedPositions> loadAllByDays(String[] populatePositionDates);
 
     @Insert
     void insert(PopulatedPositions position);

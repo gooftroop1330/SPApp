@@ -5,12 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.text.format.DateUtils;
 import android.view.WindowManager;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
@@ -20,8 +17,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 
-
-
 import java.io.BufferedReader;
 
 import java.io.FileNotFoundException;
@@ -30,15 +25,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.Random;
 
 public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
@@ -83,29 +78,35 @@ public class SplashActivity extends AppCompatActivity {
 
     public void createPositions(long time) {
         List<Position> allPositions = new ArrayList<>();
-
         String currLine = "";
         String split = ",";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+
         try {
             InputStream is = getResources().openRawResource(R.raw.rescraped);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            List<Integer> shuffledList = createSuffledNumbers(400);
             currLine = br.readLine();
+
             Date test = new Date();
-            test.setTime(time);
             int i = 0;
+            List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
+
             while ((currLine = br.readLine()) != null) {
                 String[] position = currLine.split(split, 3);
+
                 int id = Integer.parseInt((position[1].split(". ", 2))[0]);
                 String position_name = (position[1].split(". ", 2))[1];
                 String description = position[2];
+
                 Position positionTBA = new Position();
                 positionTBA.setId(id);
                 positionTBA.setPosition(position_name);
                 positionTBA.setDescription(description);
                 positionTBA.setDay((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + time);
+                test.setTime(DateUtils.DAY_IN_MILLIS * shuffledList.get(i) + time);
                 allPositions.add(positionTBA);
                 i++;
+
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -113,15 +114,17 @@ public class SplashActivity extends AppCompatActivity {
             e.printStackTrace();
 
         }
+
+        populateDatabase(allPositions);
     }
 
 
-    private List<Integer> createSuffledNumbers (int numOfNums) {
+    private List<Integer> createSuffledNumbers (int numOfNums, int seed) {
         List<Integer> shuffled = new ArrayList<>();
-        for (int i = 0; i < numOfNums; i++) {
+        for (int i = 0; i <= numOfNums; i++) {
             shuffled.add(i);
         }
-        Collections.shuffle(shuffled);
+        Collections.shuffle(shuffled, new Random(seed));
         return shuffled;
     }
 
