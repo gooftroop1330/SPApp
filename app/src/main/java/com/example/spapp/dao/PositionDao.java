@@ -22,6 +22,9 @@ public interface PositionDao
     @Query("SELECT * FROM position WHERE day IN (:positionDays)")
     List<Position> loadAllByDays(long[] positionDays);
 
+    @Query("SELECT * FROM position WhERE id = (:id)")
+    Position getPosition(int id);
+
     @Insert
     void insert(Position position);
 

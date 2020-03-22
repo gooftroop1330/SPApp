@@ -52,7 +52,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
-      //  getApplicationContext().deleteDatabase("dsp_db");
+        //getApplicationContext().deleteDatabase("dsp_db");
         db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
 
 
@@ -67,7 +67,7 @@ public class SplashActivity extends AppCompatActivity {
          }
 
         assert newDate != null;
-        long time = newDate.getTime();
+        long time = newDate.getTime() - (newDate.getTime() % DateUtils.DAY_IN_MILLIS);
         boolean db_exists = db.positionDao().getAll().isEmpty();
 
         if (db_exists)
@@ -131,7 +131,8 @@ public class SplashActivity extends AppCompatActivity {
                 int id = Integer.parseInt((position[1].split(". ", 2))[0]);
                 String position_name = (position[1].split(". ", 2))[1];
                 String description = position[2];
-                long day = (DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + startDate.getTime();
+                long useThis = (DateUtils.DAY_IN_MILLIS * i + startDate.getTime());
+                long day = useThis - (useThis % DateUtils.DAY_IN_MILLIS);
                 Position positionTBA = new Position();
                 PopulatedPositions pop_pos = new PopulatedPositions();
 
@@ -144,7 +145,6 @@ public class SplashActivity extends AppCompatActivity {
                 pop_pos.setPos_id(id);
                 pop_pos.setDate_assigned(day);
                 popPositions.add(pop_pos);
-
 
                 i++;
 
@@ -199,7 +199,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private List<Integer> createSuffledNumbers (int numOfNums, int seed) {
         List<Integer> shuffled = new ArrayList<>();
-        for (int i = 0; i <= numOfNums; i++) {
+        for (int i = 0; i < numOfNums; i++) {
             shuffled.add(i);
         }
         Collections.shuffle(shuffled, new Random(seed));
