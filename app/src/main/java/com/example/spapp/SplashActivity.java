@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,9 +48,20 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.splash);
 
-        //IF STATEMENT
-        long currTime = System.currentTimeMillis();
-        createPositions(currTime);
+        /**
+         Date newDate = new Date();
+         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+         String currDate = sdf.format(new Date());
+         try {
+         newDate = sdf.parse(currDate);
+         } catch (ParseException e) {
+         e.printStackTrace();
+         }
+         IF == NULL INITIALIZE
+         ELSE IF (populated_position.get(newDate.getTime() + DateUtils.MONTH_IN_MILLIS) == null THEN createPositions(newDate.getTime());
+         **/
+
+        initializePositions();
 
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -76,18 +88,23 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-    public void createPositions(long time) {
+    public void initializePositions() {
         List<Position> allPositions = new ArrayList<>();
+        Date startDate = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
+        String currDate = sdf.format(new Date());
+        try {
+            startDate = sdf.parse(currDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         String currLine = "";
         String split = ",";
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
 
         try {
             InputStream is = getResources().openRawResource(R.raw.rescraped);
             BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             currLine = br.readLine();
-
-            Date test = new Date();
             int i = 0;
             List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
 
@@ -102,8 +119,7 @@ public class SplashActivity extends AppCompatActivity {
                 positionTBA.setId(id);
                 positionTBA.setPosition(position_name);
                 positionTBA.setDescription(description);
-                positionTBA.setDay((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + time);
-                test.setTime(DateUtils.DAY_IN_MILLIS * shuffledList.get(i) + time);
+                positionTBA.setDay((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + startDate.getTime());
                 allPositions.add(positionTBA);
                 i++;
 
@@ -132,10 +148,10 @@ public class SplashActivity extends AppCompatActivity {
 
     private void populateDatabase(List<Position> position_list) {
         AppDatabase db;
-        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").build();
+        db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
         for(Position pos : position_list)
         {
-            db.positionDao().insert(pos);
+            db.positionDao().delete(pos);
         }
     }
 }
