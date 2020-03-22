@@ -42,6 +42,8 @@ import java.util.Locale;
 
 public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
+    AppDatabase db;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +51,15 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
+
         //IF STATEMENT
         long currTime = System.currentTimeMillis();
         createPositions(currTime);
 
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
+        // Shows splash screen for 2 seconds
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -67,6 +72,7 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, SPLASH_SCREEN_TIMEOUT);
 
+        // Initializes the ads in the app
         MobileAds.initialize(this, new OnInitializationCompleteListener() {
             @Override
             public void onInitializationComplete(InitializationStatus initializationStatus) {
@@ -74,8 +80,10 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
+
     public void createPositions(long time) {
         List<Position> allPositions = new ArrayList<>();
+
         String currLine = "";
         String split = ",";
         try {
@@ -107,6 +115,7 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
+
     private List<Integer> createSuffledNumbers (int numOfNums) {
         List<Integer> shuffled = new ArrayList<>();
         for (int i = 0; i < numOfNums; i++) {
@@ -115,6 +124,8 @@ public class SplashActivity extends AppCompatActivity {
         Collections.shuffle(shuffled);
         return shuffled;
     }
+
+    // It does what it says
 
     private void populateDatabase(List<Position> position_list) {
         AppDatabase db;
