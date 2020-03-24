@@ -53,7 +53,7 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.splash);
 
-        //getApplicationContext().deleteDatabase("dsp_db");
+        getApplicationContext().deleteDatabase("dsp_db");
 
         db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
 
@@ -76,7 +76,7 @@ public class SplashActivity extends AppCompatActivity {
         {
             initializePositions();
         }
-        else if(db.populatedPositionsDao().checkday(time) == null)
+        else if(db.populatedPositionsDao().checkday(time + (DateUtils.WEEK_IN_MILLIS * 5)) == null)
         {
             createMorePositions(time);
         }
