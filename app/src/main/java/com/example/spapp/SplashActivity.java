@@ -133,7 +133,7 @@ public class SplashActivity extends AppCompatActivity {
                 int id = Integer.parseInt((position[1].split(". ", 2))[0]);
                 String position_name = (position[1].split(". ", 2))[1];
                 String description = position[2];
-                long useThis = (DateUtils.DAY_IN_MILLIS * i + startDate.getTime());
+                long useThis = ((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + startDate.getTime());
                 long day = useThis - (useThis % DateUtils.DAY_IN_MILLIS);
                 Position positionTBA = new Position();
                 PopulatedPositions pop_pos = new PopulatedPositions();
