@@ -105,7 +105,7 @@ public class SplashActivity extends AppCompatActivity {
         });
     }
 
-
+    // only runs once on first time opening app, parses csv and call populate database
     private void initializePositions() {
         List<Position> allPositions = new ArrayList<>();
         List<PopulatedPositions> popPositions = new ArrayList<>();
@@ -163,39 +163,24 @@ public class SplashActivity extends AppCompatActivity {
 
     private void createMorePositions(long time) {
         List<PopulatedPositions> popPositions = new ArrayList<>();
-        String currLine = "";
-        String split = ",";
+        List<Position> positions = db.positionDao().getAll();
 
-        try {
-            InputStream is = getResources().openRawResource(R.raw.rescraped);
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            currLine = br.readLine();
+        int i = 0;
+        List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
 
-            int i = 0;
-            List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
-
-            while ((currLine = br.readLine()) != null) {
-                String[] position = currLine.split(split, 3);
-                int id = Integer.parseInt((position[1].split(". ", 2))[0]);
+           for(Position pos : positions)
+           {
+                int id = pos.getId();
                 long dateAssigned = (DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + time;
                 PopulatedPositions pop_pos = new PopulatedPositions();
-
                 pop_pos.setPos_id(id);
                 pop_pos.setDate_assigned(dateAssigned);
                 popPositions.add(pop_pos);
 
                 i++;
-
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-
-        }
 
         updateDatabase(popPositions);
-
     }
 
 

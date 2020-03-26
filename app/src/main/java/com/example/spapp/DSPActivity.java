@@ -1,12 +1,16 @@
 package com.example.spapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.spapp.database.AppDatabase;
@@ -28,6 +32,8 @@ public class DSPActivity extends AppCompatActivity
     SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
     Position position;
     String selectedDate;
+    Button like;
+    Button dislike;
     private AdView ad_view3;
 
     @Override
@@ -36,6 +42,7 @@ public class DSPActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         selectedDate = getIntent().getStringExtra("selectedDate");
         db = Room.databaseBuilder(getApplicationContext(),AppDatabase.class, "dsp_db").allowMainThreadQueries().build();
+
 
         try
         {
@@ -52,19 +59,52 @@ public class DSPActivity extends AppCompatActivity
 
         TextView textView = findViewById(R.id.date);
         TextView position_name = findViewById(R.id.position);
-        TextView description = findViewById(R.id.description);
+        //TextView description = findViewById(R.id.description);
         textView.setText(selectedDate);
 
         // Position name
-        position_name.setText(position.position);
+        position_name.setText(position.getPosition());
         // Description
-        description.setText(position.description);
+        //description.setText(position.getDescription());
+
+        like = (Button) findViewById(R.id.like);
+        dislike = (Button) findViewById(R.id.dislike);
+
 
         // Google Ads
         ad_view3 = (AdView) findViewById(R.id.adView3);
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(AdRequest.DEVICE_ID_EMULATOR).build();
         ad_view3.loadAd(adRequest);
+
+        //IT WONT KEEP THE COLOR! WHY???
+        if(position.getLike() == 1)
+        {
+            like.setBackgroundResource(R.drawable.liked);
+        }
+        else if(position.getLike() == -1)
+        {
+            dislike.setBackgroundResource(R.drawable.disliked);
+        }
+
+        like.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                like.setBackgroundResource(R.drawable.liked);
+                dislike.setBackgroundResource(R.drawable.dislike_button);
+            }
+        });
+        dislike.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                dislike.setBackgroundResource(R.drawable.disliked);
+                like.setBackgroundResource(R.drawable.like_button);
+            }
+        });
 
 
     }
@@ -74,6 +114,25 @@ public class DSPActivity extends AppCompatActivity
     {
         Intent intent = new Intent(this, CalendarActivity.class);
         intent.putExtra("selectedDate", selectedDate);
+        startActivity(intent);
+    }
+
+    public void like(View view)
+    {
+        db.positionDao().likePosition(position.getId(), 1);
+    }
+
+    public void dislike(View view)
+    {
+
+        db.positionDao().likePosition(position.getId(), -1);
+    }
+
+    public void info(View view)
+    {
+        Intent intent = new Intent(this, InfoActivity.class);
+        intent.putExtra("description",position.getDescription());
+        intent.putExtra("position",position.getPosition());
         startActivity(intent);
     }
 

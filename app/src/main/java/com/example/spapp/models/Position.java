@@ -8,16 +8,19 @@ import androidx.room.PrimaryKey;
 public class Position
 {
     @PrimaryKey
-    public int id;
+    private int id;
 
     @ColumnInfo(name = "position_name")
-    public String position;
+    private String position;
 
-    @ColumnInfo(name="description")
-    public String description;
+    @ColumnInfo(name = "description")
+    private String description;
 
     @ColumnInfo(name = "day")
-    public long day;
+    private long day;
+
+    @ColumnInfo(name = "like")
+    private int like;
 
     public int getId() {
         return id;
@@ -50,4 +53,8 @@ public class Position
     public void setDay(long day) {
         this.day = day;
     }
+
+    public int getLike() { return like; }
+
+    public void setLike(int like) { this.like = like; }
 }

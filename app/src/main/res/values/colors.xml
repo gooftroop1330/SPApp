@@ -3,4 +3,6 @@
     <color name="colorPrimary">#333333</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#ED77E5</color>
+    <color name="like">#60C460</color>
+    <color name="dislike">#C46060</color>
 </resources>
