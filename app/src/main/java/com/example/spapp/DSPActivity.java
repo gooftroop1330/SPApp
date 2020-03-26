@@ -87,26 +87,6 @@ public class DSPActivity extends AppCompatActivity
             dislike.setBackgroundResource(R.drawable.disliked);
         }
 
-        like.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                like.setBackgroundResource(R.drawable.liked);
-                dislike.setBackgroundResource(R.drawable.dislike_button);
-            }
-        });
-        dislike.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                dislike.setBackgroundResource(R.drawable.disliked);
-                like.setBackgroundResource(R.drawable.like_button);
-            }
-        });
-
-
     }
 
     // Clcik on calendar and it sends the date from dsp to calendar
@@ -119,12 +99,15 @@ public class DSPActivity extends AppCompatActivity
 
     public void like(View view)
     {
+        like.setBackgroundResource(R.drawable.liked);
+        dislike.setBackgroundResource(R.drawable.dislike_button);
         db.positionDao().likePosition(position.getId(), 1);
     }
 
     public void dislike(View view)
     {
-
+        dislike.setBackgroundResource(R.drawable.disliked);
+        like.setBackgroundResource(R.drawable.like_button);
         db.positionDao().likePosition(position.getId(), -1);
     }
 
