@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
+import java.util.TimeZone;
 
 public class SplashActivity extends AppCompatActivity {
     private static int SPLASH_SCREEN_TIMEOUT = 2000;
@@ -78,7 +79,7 @@ public class SplashActivity extends AppCompatActivity {
         }
         else if(db.populatedPositionsDao().checkday(time + (DateUtils.WEEK_IN_MILLIS * 5)) == null)
         {
-            createMorePositions(time);
+            createMorePositions(time, db.populatedPositionsDao().getAll().size());
         }
 
 
@@ -109,6 +110,7 @@ public class SplashActivity extends AppCompatActivity {
     private void initializePositions() {
         List<Position> allPositions = new ArrayList<>();
         List<PopulatedPositions> popPositions = new ArrayList<>();
+
         Date startDate = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy", Locale.getDefault());
         String currDate = sdf.format(new Date());
@@ -117,6 +119,7 @@ public class SplashActivity extends AppCompatActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         String currLine = "";
         String split = ",";
 
@@ -126,15 +129,16 @@ public class SplashActivity extends AppCompatActivity {
             currLine = br.readLine();
 
             int i = 0;
-            List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
+            List<Integer> shuffledList = createSuffledNumbers(2020);
 
             while ((currLine = br.readLine()) != null) {
                 String[] position = currLine.split(split, 3);
                 int id = Integer.parseInt((position[1].split(". ", 2))[0]);
                 String position_name = (position[1].split(". ", 2))[1];
                 String description = position[2];
-                long useThis = ((DateUtils.DAY_IN_MILLIS * shuffledList.get(i)) + startDate.getTime());
+                long useThis = ((DateUtils.DAY_IN_MILLIS * (shuffledList.get(i) - 1)) + startDate.getTime());
                 long day = useThis - (useThis % DateUtils.DAY_IN_MILLIS);
+
                 Position positionTBA = new Position();
                 PopulatedPositions pop_pos = new PopulatedPositions();
 
@@ -142,6 +146,7 @@ public class SplashActivity extends AppCompatActivity {
                 positionTBA.setPosition(position_name);
                 positionTBA.setDescription(description);
                 positionTBA.setDay(day);
+                positionTBA.setImage(id + ".png");
                 allPositions.add(positionTBA);
 
                 pop_pos.setPos_id(id);
@@ -161,12 +166,12 @@ public class SplashActivity extends AppCompatActivity {
         populateDatabase(allPositions, popPositions);
     }
 
-    private void createMorePositions(long time) {
+    private void createMorePositions(long time, int seed) {
         List<PopulatedPositions> popPositions = new ArrayList<>();
         List<Position> positions = db.positionDao().getAll();
 
         int i = 0;
-        List<Integer> shuffledList = createSuffledNumbers(400, Calendar.getInstance().get(Calendar.YEAR));
+        List<Integer> shuffledList = createSuffledNumbers(seed);
 
            for(Position pos : positions)
            {
@@ -184,13 +189,97 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
-    private List<Integer> createSuffledNumbers (int numOfNums, int seed) {
-        List<Integer> shuffled = new ArrayList<>();
-        for (int i = 0; i < numOfNums; i++) {
-            shuffled.add(i);
+    private List<Integer> createSuffledNumbers (int seed) {
+        List<Integer> firstShuffle = new ArrayList<>();
+        List<Integer> lastShuffle = new ArrayList<>();
+
+        int base = (seed / 10) % 400;
+
+        int a = 0;
+        int b = base - 1;
+        int c = base;
+        int d = 399;
+
+        int counter = 0;
+
+        int aPartition = (b - a) / 2;
+        int aCounter = 0;
+        int bPartition = (b - a) / 2;
+        int bCounter = 0;
+        int cPartition = (d - c) / 2;
+        int cCounter = 0;
+        int dPartition = (d - c) / 2;
+        int dCounter = 0;
+
+        a = a + aPartition;
+        d = d - dPartition;
+
+        while (counter < 400) {
+            if (cCounter <= cPartition) {
+                firstShuffle.add(c);
+                c++;
+                cCounter++;
+                counter++;
+            }
+            if (dCounter <= dPartition) {
+                firstShuffle.add(d);
+                d++;
+                dCounter++;
+                counter++;
+            }
+            if (aCounter <= aPartition) {
+                firstShuffle.add(a);
+                a--;
+                aCounter++;
+                counter++;
+            }
+            if (bCounter <= bPartition) {
+                firstShuffle.add(b);
+                b--;
+                bCounter++;
+                counter++;
+            }
         }
-        Collections.shuffle(shuffled, new Random(seed));
-        return shuffled;
+
+        a = 0 + aPartition;
+        b = base - 1;
+        c = base;
+        d = 399 - dPartition;
+
+        counter = 0;
+        aCounter = 0;
+        bCounter = 0;
+        cCounter = 0;
+        dCounter = 0;
+
+        while (counter < 400) {
+            if (cCounter <= cPartition) {
+                lastShuffle.add(firstShuffle.get(c));
+                c++;
+                cCounter++;
+                counter++;
+            }
+            if (dCounter <= dPartition) {
+                lastShuffle.add(firstShuffle.get(d));
+                d++;
+                dCounter++;
+                counter++;
+            }
+            if (aCounter <= aPartition) {
+                lastShuffle.add(firstShuffle.get(a));
+                a--;
+                aCounter++;
+                counter++;
+            }
+            if (bCounter <= bPartition) {
+                lastShuffle.add(firstShuffle.get(b));
+                b--;
+                bCounter++;
+                counter++;
+            }
+        }
+
+        return lastShuffle;
     }
 
     // Runs only first time app starts

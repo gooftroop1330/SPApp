@@ -104,6 +104,8 @@ public class DSPActivity extends AppCompatActivity
         db.positionDao().likePosition(position.getId(), 1);
     }
 
+    //860283
+
     public void dislike(View view)
     {
         dislike.setBackgroundResource(R.drawable.disliked);

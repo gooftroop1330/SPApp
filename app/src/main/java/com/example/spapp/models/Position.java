@@ -22,6 +22,9 @@ public class Position
     @ColumnInfo(name = "like")
     private int like;
 
+    @ColumnInfo(name = "image")
+    private String image;
+
     public int getId() {
         return id;
     }
@@ -57,4 +60,8 @@ public class Position
     public int getLike() { return like; }
 
     public void setLike(int like) { this.like = like; }
+
+    public String getImage() { return image; }
+
+    public void setImage(String image) { this.image = image; }
 }
