@@ -146,7 +146,7 @@ public class SplashActivity extends AppCompatActivity {
                 positionTBA.setPosition(position_name);
                 positionTBA.setDescription(description);
                 positionTBA.setDay(day);
-                positionTBA.setImage(id + ".png");
+                positionTBA.setImage("pos" + id);
                 allPositions.add(positionTBA);
 
                 pop_pos.setPos_id(id);

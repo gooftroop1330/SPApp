@@ -1,22 +1,20 @@
 package com.example.spapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.spapp.database.AppDatabase;
 import com.example.spapp.models.Position;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 import java.text.ParseException;
@@ -59,13 +57,15 @@ public class DSPActivity extends AppCompatActivity
 
         TextView textView = findViewById(R.id.date);
         TextView position_name = findViewById(R.id.position);
-        //TextView description = findViewById(R.id.description);
+        ImageView position_picture = findViewById(R.id.posPic);
         textView.setText(selectedDate);
-
         // Position name
         position_name.setText(position.getPosition());
         // Description
         //description.setText(position.getDescription());
+        Resources res = getResources();
+        int resId = res.getIdentifier(position.getImage(), "drawable", getPackageName());
+        position_picture.setImageResource(resId);
 
         like = (Button) findViewById(R.id.like);
         dislike = (Button) findViewById(R.id.dislike);
